@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "681593751225",
+    "project_id": "atrefo-526ff",
+    "storage_bucket": "atrefo-526ff.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:681593751225:android:de736101226a57e5667d68",
+        "android_client_info": {
+          "package_name": "com.fav.atrefo"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC9kmeWSwNqbaXRD2UBR8WV9sr3BMsxR2Y"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
