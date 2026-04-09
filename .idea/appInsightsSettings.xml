@@ -17,10 +17,10 @@
             <InsightsFilterSettings>
               <option name="connection">
                 <ConnectionSetting>
-                  <option name="appId" value="PLACEHOLDER" />
-                  <option name="mobileSdkAppId" value="" />
-                  <option name="projectId" value="" />
-                  <option name="projectNumber" value="" />
+                  <option name="appId" value="com.fav.atrefo" />
+                  <option name="mobileSdkAppId" value="1:681593751225:android:de736101226a57e5667d68" />
+                  <option name="projectId" value="atrefo-526ff" />
+                  <option name="projectNumber" value="681593751225" />
                 </ConnectionSetting>
               </option>
               <option name="signal" value="SIGNAL_UNSPECIFIED" />
