@@ -22,6 +22,10 @@ ktlint {
     }
 }
 
+tasks.named("preBuild") {
+    dependsOn("ktlintFormat")
+}
+
 android {
     namespace = "com.fav.atrefo"
     compileSdk = 36
@@ -42,7 +46,7 @@ android {
             isShrinkResources = true
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro"
+                "proguard-rules.pro",
             )
         }
     }
