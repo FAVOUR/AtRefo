@@ -2,6 +2,24 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
+    alias(libs.plugins.klint)
+}
+
+ktlint {
+    version = "0.50.0"
+    android = true
+
+    // fail build if issues found
+    ignoreFailures = false
+
+    // show output in console
+    outputToConsole = true
+
+    // optional: filter files
+    filter {
+        exclude("**/generated/**")
+        include("**/kotlin/**")
+    }
 }
 
 android {
