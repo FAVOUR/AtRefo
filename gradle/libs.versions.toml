@@ -11,6 +11,7 @@ composeBom = "2024.09.00"
 klint = "12.1.0"
 googleServices = "4.4.4"
 firebase_bom = "34.12.0"
+crashlyticsPlugin  = "3.0.3"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -28,8 +29,13 @@ androidx-compose-ui-test-manifest = { group = "androidx.compose.ui", name = "ui-
 androidx-compose-ui-test-junit4 = { group = "androidx.compose.ui", name = "ui-test-junit4" }
 androidx-compose-material3 = { group = "androidx.compose.material3", name = "material3" }
 
-#Firebase
+# Firebase BOM — manages all Firebase library versions
 firebase-bom = { group = "com.google.firebase", name = "firebase-bom",version.ref="firebase_bom" }
+
+# Core Firebase libraries (no version needed — BOM handles it)
+firebase-crashlytics       = { module = "com.google.firebase:firebase-crashlytics" }
+
+
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
@@ -37,4 +43,6 @@ kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 klint = { id = "org.jlleitschuh.gradle.ktlint", version.ref = "klint" }
 google-services = { id = "com.google.gms.google-services", version.ref = "googleServices" }
+firebase-crashlytics = { id = "com.google.firebase.crashlytics",   version.ref = "crashlyticsPlugin" }
+
 
