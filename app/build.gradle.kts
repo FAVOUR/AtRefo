@@ -6,9 +6,8 @@ plugins {
     alias(libs.plugins.klint)
     alias(libs.plugins.google.services)
     alias(libs.plugins.firebase.crashlytics)
-    alias(libs.plugins.hilt)             // Hilt plugin
+    alias(libs.plugins.hilt) // Hilt plugin
     alias(libs.plugins.ksp)
-
 }
 
 ktlint {
@@ -86,9 +85,8 @@ dependencies {
 
     // Hilt
     implementation(libs.hilt.android)
-    ksp(libs.hilt.compiler)                      // Use ksp (preferred) or kapt
+    ksp(libs.hilt.compiler) // Use ksp (preferred) or kapt
     implementation(libs.hilt.navigation.compose) // Only if using Compose
-
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
