@@ -12,7 +12,7 @@ import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
 
 @Module
-@InstallIn(SingletonComponent::class)  // App-wide singleton scope
+@InstallIn(SingletonComponent::class) // App-wide singleton scope
 object FirebaseModule {
 
     /**
@@ -23,7 +23,7 @@ object FirebaseModule {
     @Provides
     @Singleton
     fun provideFirebaseApp(
-        @ApplicationContext context: Context
+        @ApplicationContext context: Context,
     ): FirebaseApp {
         return FirebaseApp.getInstance()
         // Or: FirebaseApp.initializeApp(context) ?: FirebaseApp.getInstance()
@@ -48,9 +48,9 @@ object FirebaseModule {
     @Provides
     @Singleton
     fun provideRootDatabaseReference(
-        database: FirebaseDatabase
+        database: FirebaseDatabase,
     ): DatabaseReference {
-        return database.reference  // root "/"
+        return database.reference // root "/"
         // Or a specific node: database.getReference("users")
     }
 }
