@@ -1,0 +1,1 @@
+[![codecov](https://codecov.io/github/FAVOUR/AtRefo/graph/badge.svg?token=05FD40O1S6)](https://codecov.io/github/FAVOUR/AtRefo)
