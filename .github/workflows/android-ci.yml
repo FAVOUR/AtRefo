@@ -28,15 +28,70 @@ jobs:
       - name: Run unit tests
         run: ./gradlew testDebugUnitTest
 
-      - name: Generate coverage report
-        run: ./gradlew jacocoTestReport
+      # ── Android emulator for instrumented (Compose) tests ──────────────────
+      - name: Enable KVM for hardware acceleration
+        run: |
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' \
+            | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules
+          sudo udevadm trigger --name-match=kvm
+
+      - name: Cache AVD snapshot
+        uses: actions/cache@v4
+        id: avd-cache
+        with:
+          path: |
+            ~/.android/avd/*
+            ~/.android/adb*
+          key: avd-34-${{ runner.os }}
+
+      - name: Create AVD (if not cached)
+        if: steps.avd-cache.outputs.cache-hit != 'true'
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 34
+          target: google_apis
+          arch: x86_64
+          profile: Nexus 6
+          force-avd-creation: false
+          emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
+          disable-animations: false
+          script: echo "AVD created and cached"
+
+      - name: Run instrumented tests on emulator
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 34
+          target: google_apis
+          arch: x86_64
+          profile: Nexus 6
+          force-avd-creation: false
+          emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
+          disable-animations: true
+          script: ./gradlew connectedDebugAndroidTest
+
+      # ── Coverage: merge unit + instrumented results ─────────────────────────
+      - name: Generate merged coverage report
+        run: ./gradlew jacocoFullReport
+        # See note below — you need a jacocoFullReport task that merges
+        # build/outputs/code_coverage (instrumented) +
+        # build/jacoco (unit) execution data.
 
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v4
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
-          files: app/build/reports/jacoco/jacocoTestReport/jacocoTestReport.xml
+          files: app/build/reports/jacoco/jacocoFullReport/jacocoFullReport.xml
           fail_ci_if_error: true
+
+      # ── Upload test artefacts on failure ────────────────────────────────────
+      - name: Upload instrumented test results (on failure)
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: instrumented-test-results
+          path: app/build/outputs/androidTest-results/
+          retention-days: 7
 
   build_apk:
     runs-on: ubuntu-latest
