@@ -53,7 +53,7 @@ android {
 
         getByName("debug") {
             enableUnitTestCoverage = true
-//            enableAndroidTestCoverage = true
+            enableAndroidTestCoverage = true
         }
 
         release {
@@ -85,9 +85,12 @@ android {
 //    resolutionStrategy.force("com.squareup:javapoet:1.13.0")
 // }
 
-tasks.register<JacocoReport>("jacocoTestReport") {
-//    dependsOn("testDebugUnitTest", "createDebugCoverageReport")
-    dependsOn("testDebugUnitTest")
+tasks.register<JacocoReport>("jacocoFullReport") {
+    group = "Reporting"
+    description = "Merged unit + instrumented coverage report"
+
+    dependsOn("testDebugUnitTest", "createDebugCoverageReport")
+//    dependsOn("testDebugUnitTest")
 
     reports {
         xml.required.set(true) // for CI upload (Codecov, Coveralls, etc.)
