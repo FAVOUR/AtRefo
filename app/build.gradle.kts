@@ -147,7 +147,7 @@ tasks.register<JacocoReport>("jacocoFullReport") {
     executionData.setFrom(
         fileTree(layout.buildDirectory.get()) {
             include(
-                "jacoco/testDebugUnitTest.exec",
+//                "jacoco/testDebugUnitTest.exec", //old compilers need this
                 "outputs/unit_test_code_coverage/debugUnitTest/testDebugUnitTest.exec",
                 "outputs/code_coverage/debugAndroidTest/connected/**/*.ec",
             )
