@@ -1,7 +1,12 @@
 package com.fav.atrefo
 
+import androidx.compose.foundation.layout.padding
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.test.*
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
+import androidx.compose.ui.test.junit4.createComposeRule
+import androidx.compose.ui.unit.dp
+import com.fav.atrefo.ui.theme.MyApplicationTheme
 import org.junit.Rule
 import org.junit.Test
 
@@ -19,7 +24,6 @@ class MainActivityTest {
     }
 }
 
-/*
 class GreetingComposableTest {
 
     @get:Rule
@@ -60,24 +64,23 @@ class GreetingComposableTest {
             .assertIsDisplayed()
     }
 
-//    @Test
-//    fun greeting_withExplicitModifier() {
-//        composeRule.setContent {
-//            Greeting(name = "Android", modifier = Modifier.padding(16.dp))
-//        }
-//        composeRule
-//            .onNodeWithText("Hello Android!")
-//            .assertIsDisplayed()
-//    }
-//
-//    @Test
-//    fun greetingPreview_isCallable() {
-//        composeRule.setContent {
-//            GreetingPreview() // directly invoke the preview function
-//        }
-//        composeRule
-//            .onNodeWithText("Hello Android!")
-//            .assertIsDisplayed()
-//    }
+    @Test
+    fun greeting_withExplicitModifier() {
+        composeRule.setContent {
+            Greeting(name = "Android", modifier = Modifier.padding(16.dp))
+        }
+        composeRule
+            .onNodeWithText("Hello Android!")
+            .assertIsDisplayed()
+    }
+
+    @Test
+    fun greetingPreview_isCallable() {
+        composeRule.setContent {
+            GreetingPreview() // directly invoke the preview function
+        }
+        composeRule
+            .onNodeWithText("Hello Android!")
+            .assertIsDisplayed()
+    }
 }
-*/

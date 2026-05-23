@@ -105,8 +105,9 @@ tasks.register<JacocoReport>("jacocoFullReport") {
         "**/Manifest*.*",
         "**/*Test*.*",
         "android/**/*.*",
-        "**/MainActivityKt*",
         "**/AtrifoApp*",
+        "**/*\$default*", // Kotlin default parameter bridges
+        "**/MainActivityKt*", // top-level composables file
 
         // Hilt generated — all patterns needed
         "**/Dagger*.*", // ← catches DaggerAtrifoApp_HiltComponents_*

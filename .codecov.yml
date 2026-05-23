@@ -1,0 +1,33 @@
+coverage:
+status:
+project:
+default:
+target: 100%
+
+ignore:
+- "**/R.class"
+- "**/R$*.class"
+- "**/BuildConfig.*"
+- "**/Manifest*.*"
+- "**/*Test*.*"
+- "android/**/*.*"
+- "**/AtrifoApp*"
+- "**/*$default*"
+- "**/MainActivityKt*"
+- "**/Dagger*.*"
+- "**/*_HiltComponents*.*"
+- "**/*HiltComponents*.*"
+- "**/*_HiltModules*.*"
+- "**/*Hilt_*.*"
+- "**/hilt_aggregated_deps/**"
+- "**/*ComponentTreeDeps*.*"
+- "**/AtrifoApp_*.*"
+- "**/DaggerAtrifoApp*.*"
+- "**/FirebaseModule*.*"
+- "**/*_Provide*.*"
+- "**/ComposableSingletons*.*"
+- "**/databinding/**"
+- "**/BR.*"
+- "**/*_Impl*.*"
+- "**/dagger/**"
+- "**/ui/theme/**"
