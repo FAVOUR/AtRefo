@@ -1,23 +1,83 @@
 package com.fav.atrefo
 
-import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.*
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
-import androidx.compose.ui.test.onNodeWithText
-import androidx.test.ext.junit.runners.AndroidJUnit4
 import org.junit.Rule
 import org.junit.Test
-import org.junit.runner.RunWith
 
-@RunWith(AndroidJUnit4::class)
 class MainActivityTest {
 
     @get:Rule
-    val composeTestRule = createAndroidComposeRule<MainActivity>()
+    val composeRule = createAndroidComposeRule<MainActivity>()
 
+    // Covers: onCreate, enableEdgeToEdge, setContent, Scaffold, Greeting composable
     @Test
-    fun mainActivity_displaysHelloAndroid() {
-        composeTestRule
+    fun mainActivity_launchesAndDisplaysGreeting() {
+        composeRule
             .onNodeWithText("Hello Android!")
             .assertIsDisplayed()
     }
 }
+
+/*
+class GreetingComposableTest {
+
+    @get:Rule
+    val composeRule = createComposeRule()
+
+    // Covers: Greeting() composable directly
+    @Test
+    fun greeting_displaysCorrectText() {
+        composeRule.setContent {
+            Greeting(name = "Android")
+        }
+        composeRule
+            .onNodeWithText("Hello Android!")
+            .assertIsDisplayed()
+    }
+
+    // Covers: Greeting() with different name
+    @Test
+    fun greeting_displaysCustomName() {
+        composeRule.setContent {
+            Greeting(name = "World")
+        }
+        composeRule
+            .onNodeWithText("Hello World!")
+            .assertIsDisplayed()
+    }
+
+    // Covers: GreetingPreview composable
+    @Test
+    fun greetingPreview_renders() {
+        composeRule.setContent {
+            MyApplicationTheme {
+                Greeting("Android")
+            }
+        }
+        composeRule
+            .onNodeWithText("Hello Android!")
+            .assertIsDisplayed()
+    }
+
+//    @Test
+//    fun greeting_withExplicitModifier() {
+//        composeRule.setContent {
+//            Greeting(name = "Android", modifier = Modifier.padding(16.dp))
+//        }
+//        composeRule
+//            .onNodeWithText("Hello Android!")
+//            .assertIsDisplayed()
+//    }
+//
+//    @Test
+//    fun greetingPreview_isCallable() {
+//        composeRule.setContent {
+//            GreetingPreview() // directly invoke the preview function
+//        }
+//        composeRule
+//            .onNodeWithText("Hello Android!")
+//            .assertIsDisplayed()
+//    }
+}
+*/

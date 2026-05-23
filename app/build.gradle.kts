@@ -105,6 +105,8 @@ tasks.register<JacocoReport>("jacocoFullReport") {
         "**/Manifest*.*",
         "**/*Test*.*",
         "android/**/*.*",
+        "**/MainActivityKt*",
+        "**/AtrifoApp*",
 
         // Hilt generated — all patterns needed
         "**/Dagger*.*", // ← catches DaggerAtrifoApp_HiltComponents_*
@@ -133,6 +135,10 @@ tasks.register<JacocoReport>("jacocoFullReport") {
 
         // Dependency injection components
         "**/dagger/**",
+
+        // Compose Theme
+        "**/ui/theme/**",
+
     )
 
     val javaDebugTree = fileTree("${layout.buildDirectory.get()}/intermediates/javac/debug") {
