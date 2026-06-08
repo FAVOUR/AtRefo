@@ -149,6 +149,13 @@ tasks.register<JacocoReport>("jacocoFullReport") {
         exclude(fileFilter)
     }
 
+// classDirectories = "what code are we measuring?"  →  main app source only
+// executionData    = "what tests ran?"              →  unit tests + instrumented tests
+
+// executionData = the tests that ran (unit + instrumented)
+// classDirectories = your app code being measured
+// sourceDirectories = where to find the source for the HTML report
+
     sourceDirectories.setFrom(files("src/main/java", "src/main/kotlin"))
     classDirectories.setFrom(files(javaDebugTree, kotlinDebugTree))
     executionData.setFrom(
