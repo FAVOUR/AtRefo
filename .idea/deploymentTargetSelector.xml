@@ -14,6 +14,9 @@
       <SelectionState runConfigName="mainActivity_launchesAndDisplaysGreeting()">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
+      <SelectionState runConfigName="greeting_formatsNameCorrectly()">
+        <option name="selectionMode" value="DROPDOWN" />
+      </SelectionState>
     </selectionStates>
   </component>
 </project>

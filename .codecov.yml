@@ -1,33 +1,19 @@
 coverage:
-status:
-project:
-default:
-target: 100%
+  status:
+    project:
+      default:
+        target: 100%
 
 ignore:
-- "**/R.class"
-- "**/R$*.class"
-- "**/BuildConfig.*"
-- "**/Manifest*.*"
-- "**/*Test*.*"
-- "android/**/*.*"
-- "**/AtrifoApp*"
-- "**/*$default*"
-- "**/MainActivityKt*"
-- "**/Dagger*.*"
-- "**/*_HiltComponents*.*"
-- "**/*HiltComponents*.*"
-- "**/*_HiltModules*.*"
-- "**/*Hilt_*.*"
-- "**/hilt_aggregated_deps/**"
-- "**/*ComponentTreeDeps*.*"
-- "**/AtrifoApp_*.*"
-- "**/DaggerAtrifoApp*.*"
-- "**/FirebaseModule*.*"
-- "**/*_Provide*.*"
-- "**/ComposableSingletons*.*"
-- "**/databinding/**"
-- "**/BR.*"
-- "**/*_Impl*.*"
-- "**/dagger/**"
-- "**/ui/theme/**"
+  # Compose & UI
+  - "app/src/main/java/**/ui/theme/**"
+  - "app/src/main/java/**/MainActivity.kt"      # covers MainActivityKt
+
+  # App class
+  - "app/src/main/java/**/AtrifoApp.kt"
+
+  # Any generated or test files
+  - "app/src/main/java/**/*Preview*"
+  - "**/*Test*"
+  - "**/test/**"
+  - "**/androidTest/**"
