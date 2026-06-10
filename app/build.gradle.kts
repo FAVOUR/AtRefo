@@ -138,7 +138,7 @@ tasks.register<JacocoReport>("jacocoFullReport") {
         "**/dagger/**",
 
         // Compose Theme
-        "**/ui/theme/**",
+        "app/src/main/java/**/ui/theme/**",
 
     )
 
