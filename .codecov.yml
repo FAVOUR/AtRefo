@@ -12,6 +12,9 @@ ignore:
   # App class
   - "app/src/main/java/**/AtrifoApp.kt"
 
+  # Firebase class
+  - "app/src/main/java/**/FirebaseModule.kt"
+
   # Any generated or test files
   - "app/src/main/java/**/*Preview*"
   - "**/*Test*"
