@@ -1,6 +1,6 @@
 package com.fav.atrefo
 
-import org.junit.Assert.assertEquals
+import org.junit.Assert
 import org.junit.Test
 
 class GreetingKtTest {
@@ -10,6 +10,6 @@ class GreetingKtTest {
         val name = "Android!"
         val expected = "Hello $name"
 //        assertEquals(expected, "Hello $name!")
-        assertEquals(expected, greetingText(name))
+        Assert.assertEquals(expected, greetingText(name))
     }
 }
