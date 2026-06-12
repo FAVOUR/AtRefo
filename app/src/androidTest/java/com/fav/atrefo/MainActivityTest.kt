@@ -74,13 +74,13 @@ class GreetingComposableTest {
             .assertIsDisplayed()
     }
 
-//    @Test
-//    fun greetingPreview_isCallable() {
-//        composeRule.setContent {
-//            GreetingPreview() // directly invoke the preview function
-//        }
-//        composeRule
-//            .onNodeWithText("Hello Android!")
-//            .assertIsDisplayed()
-//    }
+    @Test
+    fun greetingPreview_isCallable() {
+        composeRule.setContent {
+            GreetingPreview() // directly invoke the preview function
+        }
+        composeRule
+            .onNodeWithText("Hello Android!")
+            .assertIsDisplayed()
+    }
 }
