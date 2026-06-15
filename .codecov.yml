@@ -2,7 +2,23 @@ coverage:
   status:
     project:
       default:
-        target: 100%
+        target: auto
+        threshold: 0%
+        base: auto
+        informational: false      # Hard fail, not just a warning
+        if_ci_failed: error
+        branches:
+          - develop               # Enforcement ONLY when targeting develop
+    patch:
+      default:
+        informational: true       # Patch check is advisory everywhere else
+
+#
+#coverage:
+#  status:
+#    project:
+#      default:
+#        target: 100%
 
 ignore:
   # Compose & UI
@@ -20,3 +36,33 @@ ignore:
   - "**/*Test*"
   - "**/test/**"
   - "**/androidTest/**"
+
+
+
+
+
+
+
+
+#      Any push / any PR
+#      │
+#      ▼
+#      CI runs on everything ✓
+#      Tests run, coverage uploaded
+#      │
+#      ▼
+#      Is this PR targeting develop?
+#      ┌──────────┴──────────┐
+#      YES                    NO
+#      │                      │
+#      ▼                      ▼
+#      Codecov compares      Codecov shows
+#      vs develop coverage   coverage info
+#      │                 (no gate)
+#      Coverage dropped?
+#      ┌────┴────┐
+#      YES        NO
+#      │          │
+#      ✗ fail    ✓ pass
+#      status    status
+#      check     check

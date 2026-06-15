@@ -13,6 +13,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.fav.atrefo.ui.theme.MyApplicationTheme
 
+// Ask AI if this is the best way to have the composable and the activity exist in such a way that
+// it is testable 100% code and line coverage
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -44,6 +46,8 @@ fun greetingText(name: String) = "Hello $name"
 @Preview(showBackground = true)
 @Composable
 fun GreetingPreview() {
+    // Previews should not be written in fragments...They should have the composable function and the
+    // preview in the same file. not in the fragment file
     MyApplicationTheme {
         Greeting("Android")
     }
