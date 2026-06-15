@@ -1,5 +1,6 @@
 package com.fav.atrefo
 
+import com.fav.atrefo.ui.greeting.format
 import org.junit.Assert
 import org.junit.Test
 
@@ -10,6 +11,6 @@ class GreetingKtTest {
         val name = "Android!"
         val expected = "Hello $name"
 //        assertEquals(expected, "Hello $name!")
-        Assert.assertEquals(expected, greetingText(name))
+        Assert.assertEquals(expected, format(name))
     }
 }
