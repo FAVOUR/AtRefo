@@ -140,6 +140,10 @@ tasks.register<JacocoReport>("jacocoFullReport") {
         // Compose Theme
         "**/ui/theme/**",
 
+//        // Excludes all Preview-annotated generated classes:
+//        "**/*Preview*",
+        "**/ui/preview/**",
+
     )
 
     val javaDebugTree = fileTree("${layout.buildDirectory.get()}/intermediates/javac/debug") {

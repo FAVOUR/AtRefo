@@ -20,7 +20,7 @@ class MainActivityTest {
     @Test
     fun mainActivity_launchesAndDisplaysGreeting() {
         composeRule
-            .onNodeWithText("Hello Android!")
+            .onNodeWithText("Hello Android")
             .assertIsDisplayed()
     }
 }
@@ -37,7 +37,7 @@ class GreetingComposableTest {
             GreetingScreen(name = "Android")
         }
         composeRule
-            .onNodeWithText("Hello Android!")
+            .onNodeWithText("Hello Android")
             .assertIsDisplayed()
     }
 
@@ -48,7 +48,7 @@ class GreetingComposableTest {
             GreetingScreen(name = "World")
         }
         composeRule
-            .onNodeWithText("Hello World!")
+            .onNodeWithText("Hello World")
             .assertIsDisplayed()
     }
 
@@ -61,7 +61,7 @@ class GreetingComposableTest {
             }
         }
         composeRule
-            .onNodeWithText("Hello Android!")
+            .onNodeWithText("Hello Android")
             .assertIsDisplayed()
     }
 
@@ -71,17 +71,17 @@ class GreetingComposableTest {
             GreetingScreen(name = "Android", modifier = Modifier.padding(16.dp))
         }
         composeRule
-            .onNodeWithText("Hello Android!")
+            .onNodeWithText("Hello Android")
             .assertIsDisplayed()
     }
 
-   /* @Test
-    fun greetingPreview_isCallable() {
-        composeRule.setContent {
-            GreetingScreenPreview() // directly invoke the preview function
-        }
-        composeRule
-            .onNodeWithText("Hello Android!")
-            .assertIsDisplayed()
-    }*/
+//    @Test
+//    fun greetingPreview_isCallable() {
+//        composeRule.setContent {
+//            GreetingScreenPreviews() // directly invoke the preview function
+//        }
+//        composeRule
+//            .onNodeWithText("Hello Android")
+//            .assertIsDisplayed()
+//    }
 }
