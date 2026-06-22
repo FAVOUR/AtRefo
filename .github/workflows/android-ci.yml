@@ -56,13 +56,13 @@ jobs:
         run: ./gradlew ktlintCheck
 
       # ──────────────────────────────────────────────
-      # 6. Unit tests + JaCoCo XML report
+      # 6. Unit tests + JaCoCo XML report I may need t remove the command    run: ./gradlew testDebugUnitTest
       # ──────────────────────────────────────────────
       - name: Run unit tests
         run: ./gradlew testDebugUnitTest
 
       - name: Generate JaCoCo coverage report
-        run: ./gradlew jacocoUnitTestReport
+        run: ./gradlew jacocoFullReport
         # Produces: app/build/reports/jacoco/jacocoUnitTestReport/jacocoUnitTestReport.xml
 
       # ──────────────────────────────────────────────
@@ -91,7 +91,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: jacoco-report
-          path: app/build/reports/jacoco/jacocoUnitTestReport/
+          path: app/build/reports/jacoco/jacocoFullReport/
           retention-days: 14
 
       - name: Upload Sonar scanner metadata

@@ -39,6 +39,7 @@ googleServices = "4.4.4"
 firebase_bom = "34.12.0"
 crashlyticsPlugin = "3.0.3"
 #jacoco = "0.8.12" # This is currently the most stable for modern Android
+sonarqube = "7.3.1.8318"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -81,6 +82,8 @@ firebase-crashlytics = { id = "com.google.firebase.crashlytics",   version.ref =
 hilt = { id = "com.google.dagger.hilt.android", version.ref = "hilt" }
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 #jacoco = { id = "org.jacoco", version.ref = "jacoco" }
+sonarqube-cloud = { id = "org.sonarqube", version.ref = "sonarqube" }
+
 
 
 
