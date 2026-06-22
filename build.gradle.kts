@@ -35,11 +35,11 @@ sonar {
         property("sonar.organization", "favour")
         property("sonar.host.url", "https://sonarcloud.io")
         // ← Add this
-        property(
-            "sonar.coverage.jacoco.xmlReportPaths",
-            "${project.projectDir}/app/build/reports/jacoco/jacocoUnitTestReport/jacocoUnitTestReport.xml" //no path eror but files ere reported missing
+//        property(
+//            "sonar.coverage.jacoco.xmlReportPaths",
+//            "${project.projectDir}/app/build/reports/jacoco/jacocoUnitTestReport/jacocoUnitTestReport.xml" //no path eror but files ere reported missing
 //            "${layout.buildDirectory.get()}/reports/jacoco/jacocoUnitTestReport/jacocoUnitTestReport.xml" //reported path errorerror
 
-        )
+//        )
     }
 }
