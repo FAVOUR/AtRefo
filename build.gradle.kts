@@ -31,8 +31,8 @@ plugins {
 sonar {
 
     properties {
-        property("sonar.projectKey", "traction-apps_traction-pos")
-        property("sonar.organization", "traction-apps")
+        property("sonar.projectKey", "FAVOUR_AtRefo")
+        property("sonar.organization", "favour")
         property("sonar.host.url", "https://sonarcloud.io")
         // ← Add this
         property(
