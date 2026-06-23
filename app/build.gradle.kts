@@ -53,7 +53,7 @@ android {
 
         getByName("debug") {
             enableUnitTestCoverage = true
-//            enableAndroidTestCoverage = true
+            enableAndroidTestCoverage = true
         }
 
         release {
