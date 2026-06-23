@@ -34,12 +34,17 @@ sonar {
         property("sonar.projectKey", "FAVOUR_AtRefo")
         property("sonar.organization", "favour")
         property("sonar.host.url", "https://sonarcloud.io")
+        property("sonar.exclusions", "**/*.webp,**/*.png,**/*.jpg,**/*.jpeg")
+
         // ← Add this
-//        property(
-//            "sonar.coverage.jacoco.xmlReportPaths",
-//            "${project.projectDir}/app/build/reports/jacoco/jacocoUnitTestReport/jacocoUnitTestReport.xml" //no path eror but files ere reported missing
+        property(
+            "sonar.coverage.jacoco.xmlReportPaths",
+            "app/build/reports/jacoco/jacocoFullReport/jacocoFullReport.xml" //no path eror but files ere reported missing
 //            "${layout.buildDirectory.get()}/reports/jacoco/jacocoUnitTestReport/jacocoUnitTestReport.xml" //reported path errorerror
 
-//        )
+        )
+        property("sonar.androidLint.reportPaths", "")
+//        sonar.androidLint.reportPaths=app/build/reports/lint-results-debug.xml
+
     }
 }
