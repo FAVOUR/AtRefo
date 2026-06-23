@@ -63,6 +63,9 @@ jobs:
 
       - name: Generate JaCoCo coverage report
         run: ./gradlew jacocoFullReport
+
+      - name: Debug — find JaCoCo XML
+        run: find . -name "*.xml" -path "*/jacoco/*"
         # Produces: app/build/reports/jacoco/jacocoUnitTestReport/jacocoUnitTestReport.xml
 
       # ──────────────────────────────────────────────

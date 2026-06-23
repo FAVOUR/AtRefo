@@ -36,14 +36,13 @@ sonar {
         property("sonar.host.url", "https://sonarcloud.io")
         property("sonar.exclusions", "**/*.webp,**/*.png,**/*.jpg,**/*.jpeg")
 
+//        property("sonar.sources", "app/src/main")
+//        property("sonar.tests", "app/src/test,app/src/androidTest")
         // ← Add this
         property(
             "sonar.coverage.jacoco.xmlReportPaths",
-            "app/build/reports/jacoco/jacocoFullReport/jacocoFullReport.xml" //no path eror but files ere reported missing
-//            "${layout.buildDirectory.get()}/reports/jacoco/jacocoUnitTestReport/jacocoUnitTestReport.xml" //reported path errorerror
-
-        )
-        property("sonar.androidLint.reportPaths", "")
+            "app/build/reports/jacoco/jacocoFullReport/jacocoFullReport.xml")
+        property("sonar.androidLint.reportPaths", "no-lint-report")
 //        sonar.androidLint.reportPaths=app/build/reports/lint-results-debug.xml
 
     }
