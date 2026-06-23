@@ -56,10 +56,24 @@ jobs:
         run: ./gradlew ktlintCheck
 
       # ──────────────────────────────────────────────
-      # 6. Unit tests + JaCoCo XML report I may need t remove the command    run: ./gradlew testDebugUnitTest
+      # 6. Unit And UI tests + JaCoCo XML report I may need t remove the command    run: ./gradlew testDebugUnitTest
       # ──────────────────────────────────────────────
-      - name: Run unit tests
-        run: ./gradlew testDebugUnitTest
+#      - name: Run unit tests
+#        run: ./gradlew testDebugUnitTest
+      - name: Enable KVM (hardware acceleration)
+        run: |
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules
+          sudo udevadm trigger --name-match=kvm
+
+      - name: Run unit + UI tests
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 34
+          target: google_apis
+          arch: x86_64
+          profile: Nexus 6
+          script: ./gradlew testDebugUnitTest connectedDebugAndroidTest
 
       - name: Generate JaCoCo coverage report
         run: ./gradlew jacocoFullReport

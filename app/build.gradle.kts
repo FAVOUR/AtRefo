@@ -89,8 +89,8 @@ tasks.register<JacocoReport>("jacocoFullReport") {
     group = "Reporting"
     description = "Merged unit + instrumented coverage report"
 
-//    dependsOn("testDebugUnitTest", "createDebugCoverageReport")
-    dependsOn("testDebugUnitTest")
+    dependsOn("testDebugUnitTest", "createDebugCoverageReport")
+//    dependsOn("testDebugUnitTest")
 
     reports {
         xml.required.set(true) // for CI upload (Codecov, Coveralls, etc.)
