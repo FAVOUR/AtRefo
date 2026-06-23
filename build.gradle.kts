@@ -41,7 +41,7 @@ sonar {
         // ← Add this
         property(
             "sonar.coverage.jacoco.xmlReportPaths",
-            "app/build/reports/jacoco/jacocoFullReport/jacocoFullReport.xml")
+            "${rootProject.projectDir}/app/build/reports/jacoco/jacocoFullReport/jacocoFullReport.xml")
         property("sonar.androidLint.reportPaths", "no-lint-report")
 //        sonar.androidLint.reportPaths=app/build/reports/lint-results-debug.xml
 
