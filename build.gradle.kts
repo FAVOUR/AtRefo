@@ -35,12 +35,12 @@ sonar {
         property("sonar.organization", "favour")
         property("sonar.host.url", "https://sonarcloud.io")
         property("sonar.exclusions", "**/*.webp,**/*.png,**/*.jpg,**/*.jpeg")
-        property("sonar.sources", "app/src/main")
-        property("sonar.tests", "app/src/test,app/src/androidTest")
+//        property("sonar.sources", "app/src/main")
+//        property("sonar.tests", "app/src/test,app/src/androidTest")
 
 //        property("sonar.sources", "app/src/main")
 
-        property("sonar.java.binaries", "app/build/intermediates/javac/debug")
+//        property("sonar.java.binaries", "app/build/intermediates/javac/debug")
 
         // ← Add this
         property(
