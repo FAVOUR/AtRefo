@@ -1,118 +1,138 @@
-name: Coverage & Lint
+name: CI
 
-on: [push, pull_request]
+on:
+  push:
+    branches: [ "**" ]
+  pull_request:
+    branches: [ develop, main ]
 
 jobs:
-  lint_and_test:
+  build:
+    name: Lint · Test · Coverage · Sonar · APK
     runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
 
+    env:
+      # Keeps Gradle from spawning a daemon that outlives the runner
+      GRADLE_OPTS: "-Dorg.gradle.daemon=false"
+
+    steps:
+      # ──────────────────────────────────────────────
+      # 1. Source
+      # ──────────────────────────────────────────────
+      - name: Checkout (full depth for Sonar blame)
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0          # Sonar needs full history for new-code analysis
+
+      # ──────────────────────────────────────────────
+      # 2. Java
+      # ──────────────────────────────────────────────
       - name: Set up JDK 17
         uses: actions/setup-java@v4
         with:
-          java-version: '17'
-          distribution: 'temurin'
+          distribution: temurin
+          java-version: 17
+          cache: gradle           # caches ~/.gradle between runs
 
-      - name: Cache Gradle
-        uses: actions/cache@v4
-        with:
-          path: |
-            ~/.gradle/caches
-            ~/.gradle/wrapper
-          key: gradle-${{ hashFiles('**/*.gradle*', '**/libs.versions.toml') }}
+      # ──────────────────────────────────────────────
+      # 3. Android SDK  (GitHub-hosted runners already have it)
+      # ──────────────────────────────────────────────
+      #    The ubuntu-latest runner ships with Android SDK + build-tools.
+      #    No manual install needed — unlike Bitbucket Pipelines.
 
-      - name: Run ktlint
+      # ──────────────────────────────────────────────
+      # 4. Secrets → local.properties
+      # ──────────────────────────────────────────────
+#      - name: Inject secrets into local.properties
+#        run: |
+#          echo "${{ secrets.LOCAL_PROPERTIES_B64 }}" | base64 --decode > local.properties
+        # Store your local.properties file base64-encoded as a GitHub secret
+        # named LOCAL_PROPERTIES_B64 (same pattern as your Bitbucket pipeline)
+
+      # ──────────────────────────────────────────────
+      # 5. Lint (ktlint)
+      # ──────────────────────────────────────────────
+      - name: ktlint check
         run: ./gradlew ktlintCheck
 
-      - name: Run unit tests
-        run: ./gradlew testDebugUnitTest
-
-      - name: Enable KVM for hardware acceleration
+      # ──────────────────────────────────────────────
+      # 6. Unit And UI tests + JaCoCo XML report I may need t remove the command    run: ./gradlew testDebugUnitTest
+      # ──────────────────────────────────────────────
+#      - name: Run unit tests
+#        run: ./gradlew testDebugUnitTest
+      - name: Enable KVM (hardware acceleration)
         run: |
-          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' \
-            | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
           sudo udevadm control --reload-rules
           sudo udevadm trigger --name-match=kvm
 
-      - name: Cache AVD snapshot
-        uses: actions/cache@v4
-        id: avd-cache
-        with:
-          path: |
-            ~/.android/avd/*
-            ~/.android/adb*
-          key: avd-36-${{ runner.os }}
-
-      - name: Create AVD (if not cached)
-        if: steps.avd-cache.outputs.cache-hit != 'true'
+      - name: Run unit + UI tests + coverage
         uses: reactivecircus/android-emulator-runner@v2
         with:
-          api-level: 36          # ← match your compileSdk
+          api-level: 34
           target: google_apis
           arch: x86_64
           profile: Nexus 6
-          force-avd-creation: false
-          emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
-          disable-animations: false
-          script: echo "AVD created and cached"
+          script: ./gradlew testDebugUnitTest connectedDebugAndroidTest jacocoFullReport
 
-      - name: Run instrumented tests + generate coverage
-        uses: reactivecircus/android-emulator-runner@v2
-        with:
-          api-level: 36          # ← match your compileSdk
-          target: google_apis
-          arch: x86_64
-          profile: Nexus 6
-          force-avd-creation: false
-          emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
-          disable-animations: true
-          script: |
-            ./gradlew connectedDebugAndroidTest
-            ./gradlew jacocoFullReport
+#      - name: Generate JaCoCo coverage report
+#        run: ./gradlew jacocoFullReport
 
-      - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v4
-        with:
-          token: ${{ secrets.CODECOV_TOKEN }}
-          files: app/build/reports/jacoco/jacocoFullReport/jacocoFullReport.xml
-          fail_ci_if_error: true
+      - name: Debug — find JaCoCo XML
+        run: find . -name "*.xml" -path "*/jacoco/*"
+        # Produces: app/build/reports/jacoco/jacocoUnitTestReport/jacocoUnitTestReport.xml
 
-      - name: Upload instrumented test results (on failure)
-        if: failure()
+      # ──────────────────────────────────────────────
+      # 7. SonarCloud analysis
+      # ──────────────────────────────────────────────
+      - name: SonarCloud analysis
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}   # enables PR decoration
+        run: ./gradlew sonar
+#        run: |
+#          ./gradlew sonar \
+#            -Dsonar.host.url=https://sonarcloud.io \
+#            -Dsonar.organization=${{ secrets.SONAR_ORG }} \
+#            -Dsonar.projectKey=${{ secrets.SONAR_PROJECT_KEY }} \
+#            -Dsonar.coverage.jacoco.xmlReportPaths=app/build/reports/jacoco/jacocoUnitTestReport/jacocoUnitTestReport.xml \
+#            -Dsonar.qualitygate.wait=true
+        # -Dsonar.qualitygate.wait=true → fails the job if the quality gate fails.
+        # Remove it if you want Sonar to be advisory-only.
+
+      # ──────────────────────────────────────────────
+      # 8. Upload Sonar report artifacts
+      # ──────────────────────────────────────────────
+      - name: Upload JaCoCo XML report
+        if: always()              # upload even when tests fail — useful for debugging
         uses: actions/upload-artifact@v4
         with:
-          name: instrumented-test-results
-          path: app/build/outputs/androidTest-results/
-          retention-days: 7
+          name: jacoco-report
+          path: app/build/reports/jacoco/jacocoFullReport/
+          retention-days: 14
 
-  build_apk:
-    runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
-    needs: lint_and_test
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Set up JDK 17
-        uses: actions/setup-java@v4
+      - name: Upload Sonar scanner metadata
+        if: always()
+        uses: actions/upload-artifact@v4
         with:
-          java-version: '17'
-          distribution: 'temurin'
-
-      - name: Cache Gradle
-        uses: actions/cache@v4
-        with:
+          name: sonar-scanner-report
           path: |
-            ~/.gradle/caches
-            ~/.gradle/wrapper
-          key: gradle-${{ hashFiles('**/*.gradle*', '**/libs.versions.toml') }}
+            .scannerwork/
+            app/build/sonar/
+          retention-days: 14
 
-      - name: Build debug APK
+      # ──────────────────────────────────────────────
+      # 9. Build debug APK
+      # ──────────────────────────────────────────────
+      - name: Assemble debug APK
         run: ./gradlew assembleDebug
 
+      # ──────────────────────────────────────────────
+      # 10. Upload APK artifact
+      # ──────────────────────────────────────────────
       - name: Upload debug APK
         uses: actions/upload-artifact@v4
         with:
-          name: debug-apk
-          path: app/build/outputs/apk/debug/app-debug.apk
-          retention-days: 7
+          name: atrefo-debug-${{ github.run_number }}
+          path: app/build/outputs/apk/debug/*.apk
+          retention-days: 30
