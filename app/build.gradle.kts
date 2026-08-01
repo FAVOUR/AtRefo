@@ -144,6 +144,13 @@ tasks.register<JacocoReport>("jacocoFullReport") {
 //        "**/*Preview*",
         "**/ui/preview/**",
 
+//        "**/*Screen*.class", // or more precisely target compose-generated synthetic classes
+//        "**/ComposableSingletons\$*.class",
+        "**/*ComposableSingletons*.*",
+        "**/*_Preview*.*",
+        "**android/**",
+        "**/*\$Lambda\$*.*",
+        "**/*\$inlined\$*.*",
     )
 
     val javaDebugTree = fileTree("${layout.buildDirectory.get()}/intermediates/javac/debug") {
@@ -152,9 +159,6 @@ tasks.register<JacocoReport>("jacocoFullReport") {
     val kotlinDebugTree = fileTree("${layout.buildDirectory.get()}/tmp/kotlin-classes/debug") {
         exclude(fileFilter)
     }
-
-// classDirectories = "what code are we measuring?"  →  main app source only
-// executionData    = "what tests ran?"              →  unit tests + instrumented tests
 
 // executionData = the tests that ran (unit + instrumented)
 // classDirectories = your app code being measured
