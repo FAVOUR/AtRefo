@@ -35,6 +35,13 @@ hilt {
     enableAggregatingTask = false
 }
 
+composeCompiler {
+    // Every composable otherwise gets a pair of `if (isTraceInProgress())` guards that
+    // only fire when a composition tracer is attached — i.e. never under test. They are
+    // generated branches nothing can reach, so they only distort branch coverage.
+    includeTraceMarkers = false
+}
+
 android {
     namespace = "com.fav.atrefo"
     compileSdk = 36
@@ -96,7 +103,7 @@ tasks.register<JacocoReport>("jacocoFullReport") {
     group = "Reporting"
     description = "Merged unit + instrumented coverage report"
 
-    dependsOn("testDebugUnitTest", "createDebugCoverageReport")
+    dependsOn("testDebugUnitTest", "createDebugCoverageReport", "transformDebugClassesWithAsm")
 //    dependsOn("testDebugUnitTest")
 
     reports {
@@ -130,19 +137,28 @@ tasks.register<JacocoReport>("jacocoFullReport") {
         "**/ui/preview/**",
     )
 
-    val javaDebugTree = fileTree("${layout.buildDirectory.get()}/intermediates/javac/debug") {
-        exclude(fileFilter)
-    }
-    val kotlinDebugTree = fileTree("${layout.buildDirectory.get()}/tmp/kotlin-classes/debug") {
-        exclude(fileFilter)
-    }
+    // Measure the classes that actually RAN, not the ones the compilers first emitted.
+    //
+    // Hilt rewrites @HiltAndroidApp classes after compilation: on disk in kotlin-classes
+    // AtrifoApp extends Application, at runtime it extends Hilt_AtrifoApp. JaCoCo matches
+    // execution data to classes by a CRC of their bytecode, so reading the pre-transform
+    // tree makes the app class silently report 0% however hard you test it.
+    //
+    // transformDebugClassesWithAsm/dirs is the post-transform output and holds both the
+    // Kotlin and the javac/KSP classes, so it replaces both trees.
+    val runtimeClassTree =
+        fileTree(
+            "${layout.buildDirectory.get()}/intermediates/classes/debug/transformDebugClassesWithAsm/dirs",
+        ) {
+            exclude(fileFilter)
+        }
 
 // executionData = the tests that ran (unit + instrumented)
 // classDirectories = your app code being measured
 // sourceDirectories = where to find the source for the HTML report
 
     sourceDirectories.setFrom(files("src/main/java", "src/main/kotlin"))
-    classDirectories.setFrom(files(javaDebugTree, kotlinDebugTree))
+    classDirectories.setFrom(files(runtimeClassTree))
     executionData.setFrom(
         fileTree(layout.buildDirectory.get()) {
             include(

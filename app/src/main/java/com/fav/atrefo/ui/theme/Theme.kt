@@ -1,5 +1,6 @@
 package com.fav.atrefo.ui.theme
 
+import android.annotation.SuppressLint
 import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
@@ -32,6 +33,9 @@ private val LightColorScheme = lightColorScheme(
      */
 )
 
+// The API-31 guard now lives in chooseColorScheme(), which lint cannot follow across
+// the enum. DYNAMIC_* is only ever returned when supportsDynamicColor is true.
+@SuppressLint("NewApi")
 @Composable
 fun MyApplicationTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
@@ -39,14 +43,12 @@ fun MyApplicationTheme(
     dynamicColor: Boolean = true,
     content: @Composable () -> Unit,
 ) {
-    val colorScheme = when {
-        dynamicColor && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S -> {
-            val context = LocalContext.current
-            if (darkTheme) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
-        }
-
-        darkTheme -> DarkColorScheme
-        else -> LightColorScheme
+    val context = LocalContext.current
+    val colorScheme = when (chooseColorScheme(darkTheme, dynamicColor)) {
+        ColorSchemeChoice.DYNAMIC_DARK -> dynamicDarkColorScheme(context)
+        ColorSchemeChoice.DYNAMIC_LIGHT -> dynamicLightColorScheme(context)
+        ColorSchemeChoice.STATIC_DARK -> DarkColorScheme
+        ColorSchemeChoice.STATIC_LIGHT -> LightColorScheme
     }
 
     MaterialTheme(
@@ -54,4 +56,31 @@ fun MyApplicationTheme(
         typography = Typography,
         content = content,
     )
+}
+
+/** The colour scheme a given configuration resolves to. */
+internal enum class ColorSchemeChoice {
+    DYNAMIC_DARK,
+    DYNAMIC_LIGHT,
+    STATIC_DARK,
+    STATIC_LIGHT,
+}
+
+/**
+ * Decides the colour scheme.
+ *
+ * Kept out of the composable so every combination can be exercised on the JVM —
+ * including [supportsDynamicColor] = false, which an instrumented test cannot reach
+ * on an API 31+ device, and which is therefore invisible to the emulator suite.
+ */
+internal fun chooseColorScheme(
+    darkTheme: Boolean,
+    dynamicColor: Boolean,
+    supportsDynamicColor: Boolean = Build.VERSION.SDK_INT >= Build.VERSION_CODES.S,
+): ColorSchemeChoice = when {
+    dynamicColor && supportsDynamicColor ->
+        if (darkTheme) ColorSchemeChoice.DYNAMIC_DARK else ColorSchemeChoice.DYNAMIC_LIGHT
+
+    darkTheme -> ColorSchemeChoice.STATIC_DARK
+    else -> ColorSchemeChoice.STATIC_LIGHT
 }

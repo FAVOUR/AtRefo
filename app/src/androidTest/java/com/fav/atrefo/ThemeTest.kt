@@ -73,4 +73,24 @@ class ThemeTest {
         }
         composeRule.onNodeWithText("defaults").assertIsDisplayed()
     }
+
+    @Test
+    fun onlyDarkThemeSupplied_defaultsDynamicColour() {
+        composeRule.setContent {
+            MyApplicationTheme(darkTheme = true) {
+                Text("half defaulted")
+            }
+        }
+        composeRule.onNodeWithText("half defaulted").assertIsDisplayed()
+    }
+
+    @Test
+    fun onlyDynamicColourSupplied_defaultsDarkTheme() {
+        composeRule.setContent {
+            MyApplicationTheme(dynamicColor = false) {
+                Text("other half defaulted")
+            }
+        }
+        composeRule.onNodeWithText("other half defaulted").assertIsDisplayed()
+    }
 }
