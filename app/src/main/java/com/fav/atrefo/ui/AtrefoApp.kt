@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.NonRestartableComposable
 import androidx.compose.ui.Modifier
 import com.fav.atrefo.ui.greeting.GreetingScreen
 import com.fav.atrefo.ui.theme.MyApplicationTheme
@@ -15,6 +16,9 @@ import com.fav.atrefo.ui.theme.MyApplicationTheme
  * skipped by tests. Content written inline in setContent {} is compiled into anonymous
  * singletons that no test can address directly.
  */
+// Non-restartable: composed once from setContent, so its own restart scope never earns
+// its keep. The caller's scope recomposes instead; children still skip individually.
+@NonRestartableComposable
 @Composable
 fun AtrefoApp(name: String = "Android", modifier: Modifier = Modifier) {
     MyApplicationTheme {

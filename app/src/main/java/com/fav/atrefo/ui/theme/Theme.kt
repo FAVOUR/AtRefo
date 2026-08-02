@@ -9,6 +9,7 @@ import androidx.compose.material3.dynamicDarkColorScheme
 import androidx.compose.material3.dynamicLightColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.NonRestartableComposable
 import androidx.compose.ui.platform.LocalContext
 
 private val DarkColorScheme = darkColorScheme(
@@ -36,6 +37,10 @@ private val LightColorScheme = lightColorScheme(
 // The API-31 guard now lives in chooseColorScheme(), which lint cannot follow across
 // the enum. DYNAMIC_* is only ever returned when supportsDynamicColor is true.
 @SuppressLint("NewApi")
+// Non-restartable: a root wrapper composed once. Without its own restart scope, a system
+// dark-mode change recomposes AtrefoApp's scope instead of this one - one extra scope on
+// an event the user triggers by hand, and the subtree still skips where it can.
+@NonRestartableComposable
 @Composable
 fun MyApplicationTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
