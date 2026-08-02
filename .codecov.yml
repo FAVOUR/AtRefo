@@ -20,23 +20,17 @@ coverage:
 #      default:
 #        target: 100%
 
+# Kept deliberately short: JaCoCo has already decided what enters the report
+# (see fileFilter in app/build.gradle.kts), so anything listed twice only hides
+# drift between the two lists. Production code is NOT ignored here — if it ships,
+# it counts.
 ignore:
-  # Compose & UI
-  - "app/src/main/java/**/ui/theme/**"
- ## - "app/src/main/java/**/MainActivity.kt"      # covers MainActivityKt
+  # @Preview scaffolding — hand-written, but never runs in production
+  - "app/src/main/java/**/ui/preview/**"
 
-  # App class
-  - "app/src/main/java/**/AtrifoApp.kt"
-
-  # Firebase class
-  - "app/src/main/java/**/FirebaseModule.kt"
-
-  # Any generated or test files
-  - "app/src/main/java/**/*Preview*"
-  - "**/*Test*"
+  # Test sources
   - "**/test/**"
   - "**/androidTest/**"
-#  - "**/*Preview*",
 
 
 
