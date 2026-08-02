@@ -35,6 +35,13 @@ hilt {
     enableAggregatingTask = false
 }
 
+composeCompiler {
+    // Every composable otherwise gets a pair of `if (isTraceInProgress())` guards that
+    // only fire when a composition tracer is attached — i.e. never under test. They are
+    // generated branches nothing can reach, so they only distort branch coverage.
+    includeTraceMarkers = false
+}
+
 android {
     namespace = "com.fav.atrefo"
     compileSdk = 36
@@ -75,6 +82,13 @@ android {
     buildFeatures {
         compose = true
     }
+    testOptions {
+        unitTests {
+            // Android framework stubs return defaults instead of throwing, so plain
+            // JVM tests can exercise code that merely touches framework types.
+            isReturnDefaultValues = true
+        }
+    }
 }
 
 // jacoco {
@@ -89,7 +103,7 @@ tasks.register<JacocoReport>("jacocoFullReport") {
     group = "Reporting"
     description = "Merged unit + instrumented coverage report"
 
-    dependsOn("testDebugUnitTest", "createDebugCoverageReport")
+    dependsOn("testDebugUnitTest", "createDebugCoverageReport", "transformDebugClassesWithAsm")
 //    dependsOn("testDebugUnitTest")
 
     reports {
@@ -97,75 +111,54 @@ tasks.register<JacocoReport>("jacocoFullReport") {
         html.required.set(true) // for local browser viewing
     }
 
+    // Only genuinely generated code belongs here. Anything hand-written stays in the
+    // denominator — if it is worth writing, it is worth covering.
+    //
+    // Patterns must be anchored so they cannot swallow the sources they sit next to:
+    // "AtrifoApp_*" (generated), never "AtrifoApp*" (which also eats AtrifoApp.kt);
+    // "*_Provide*" (generated factories), never "FirebaseModule*" (which also eats
+    // the hand-written @Provides bodies).
     val fileFilter = listOf(
-        // Android generated
+        // Android build-generated
         "**/R.class",
         "**/R$*.class",
         "**/BuildConfig.*",
         "**/Manifest*.*",
-        "**/*Test*.*",
-        "android/**/*.*",
-        "**/AtrifoApp*",
-        "**/*\$default*", // Kotlin default parameter bridges
-        "**/MainActivityKt*", // top-level composables file
 
-        // Hilt generated — all patterns needed
-        "**/Dagger*.*", // ← catches DaggerAtrifoApp_HiltComponents_*
-        "**/*_HiltComponents*.*", // ← catches AtrifoApp_HiltComponents_*
-        "**/*HiltComponents*.*",
-        "**/*_HiltModules*.*",
-        "**/*Hilt_*.*",
+        // Hilt / Dagger generated
+        "**/AtrifoApp_*.*", // AtrifoApp_HiltComponents, _GeneratedInjector, _ComponentTreeDeps
+        "**/Dagger*.*", // DaggerAtrifoApp_HiltComponents_SingletonC
+        "**/Hilt_*.*", // Hilt_AtrifoApp
+        "**/*_Provide*.*", // FirebaseModule_ProvideFirebaseAppFactory
         "**/hilt_aggregated_deps/**",
-        "**/*ComponentTreeDeps*.*", // ← catches AtrifoApp_ComponentTreeDeps
-        "**/AtrifoApp_*.*", // ← catches all AtrifoApp_ generated classes
-        "**/DaggerAtrifoApp*.*",
-
-        // Firebase generated
-        "**/FirebaseModule*.*",
-        "**/*_Provide*.*", // ← catches FirebaseModule_ProvideFirebase*
-
-        // Composable singletons (Compose compiler generated)
-        "**/ComposableSingletons*.*",
-
-        // Data binding
-        "**/databinding/**",
-        "**/BR.*",
-
-        // Room
-        "**/*_Impl*.*",
-
-        // Dependency injection components
         "**/dagger/**",
 
-        // Compose Theme
-        "**/ui/theme/**",
-
-//        // Excludes all Preview-annotated generated classes:
-//        "**/*Preview*",
+        // @Preview scaffolding — hand-written, but never runs in production
         "**/ui/preview/**",
-
-//        "**/*Screen*.class", // or more precisely target compose-generated synthetic classes
-//        "**/ComposableSingletons\$*.class",
-        "**/*ComposableSingletons*.*",
-        "**/*_Preview*.*",
-        "**android/**",
-        "**/*\$Lambda\$*.*",
-        "**/*\$inlined\$*.*",
     )
 
-    val javaDebugTree = fileTree("${layout.buildDirectory.get()}/intermediates/javac/debug") {
-        exclude(fileFilter)
-    }
-    val kotlinDebugTree = fileTree("${layout.buildDirectory.get()}/tmp/kotlin-classes/debug") {
-        exclude(fileFilter)
-    }
+    // Measure the classes that actually RAN, not the ones the compilers first emitted.
+    //
+    // Hilt rewrites @HiltAndroidApp classes after compilation: on disk in kotlin-classes
+    // AtrifoApp extends Application, at runtime it extends Hilt_AtrifoApp. JaCoCo matches
+    // execution data to classes by a CRC of their bytecode, so reading the pre-transform
+    // tree makes the app class silently report 0% however hard you test it.
+    //
+    // transformDebugClassesWithAsm/dirs is the post-transform output and holds both the
+    // Kotlin and the javac/KSP classes, so it replaces both trees.
+    val runtimeClassTree =
+        fileTree(
+            "${layout.buildDirectory.get()}/intermediates/classes/debug/transformDebugClassesWithAsm/dirs",
+        ) {
+            exclude(fileFilter)
+        }
 
 // executionData = the tests that ran (unit + instrumented)
 // classDirectories = your app code being measured
 // sourceDirectories = where to find the source for the HTML report
 
     sourceDirectories.setFrom(files("src/main/java", "src/main/kotlin"))
-    classDirectories.setFrom(files(javaDebugTree, kotlinDebugTree))
+    classDirectories.setFrom(files(runtimeClassTree))
     executionData.setFrom(
         fileTree(layout.buildDirectory.get()) {
             include(
@@ -199,6 +192,7 @@ dependencies {
     implementation(libs.hilt.navigation.compose) // Only if using Compose
 
     testImplementation(libs.junit)
+    testImplementation(libs.mockk)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
     androidTestImplementation(platform(libs.androidx.compose.bom))

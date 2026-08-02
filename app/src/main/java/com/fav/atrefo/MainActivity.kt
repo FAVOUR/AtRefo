@@ -4,12 +4,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Scaffold
-import androidx.compose.ui.Modifier
-import com.fav.atrefo.ui.greeting.GreetingScreen
-import com.fav.atrefo.ui.theme.MyApplicationTheme
+import com.fav.atrefo.ui.AtrefoApp
 
 // Ask AI if this is the best way to have the composable and the activity exist in such a way that
 // it is testable 100% code and line coverage
@@ -18,14 +13,7 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
-            MyApplicationTheme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    GreetingScreen(
-                        name = "Android",
-                        modifier = Modifier.padding(innerPadding),
-                    )
-                }
-            }
+            AtrefoApp()
         }
     }
 }
